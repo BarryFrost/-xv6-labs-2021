@@ -36,7 +36,7 @@ get_freedproc(void)
   uint64 num_freedproc = 0;
   for(p = proc; p < &proc[NPROC]; p++) {
     // acquire(&p->lock);
-    if(p->state == UNUSED) {
+    if(p->state != UNUSED) {
       num_freedproc++;
       // goto found;
     }

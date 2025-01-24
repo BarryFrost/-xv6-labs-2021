@@ -114,7 +114,7 @@ sys_sysinfo(void)
 {
   uint64 usr_ptr; // user pointer to struct stat
 
-  if(argaddr(1, &usr_ptr) < 0) // get pointer from caller's argument
+  if(argaddr(0, &usr_ptr) < 0) // get pointer from caller's argument
     return -1; 
 
   return sysstat(usr_ptr);

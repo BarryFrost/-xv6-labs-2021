@@ -28,7 +28,7 @@ get_freedmem(void)
 {
   uint64 freemem = 0;
   struct run* h = kmem.freelist;
-  for(; h ; h++)
+  for(; h ; h = h->next)
   {
     freemem++;
   }
