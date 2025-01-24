@@ -106,3 +106,16 @@ sys_trace(void)
   myproc()->mask = mask;
   return 0;
 }
+
+extern int sysstat(uint64);
+
+uint64
+sys_sysinfo(void)
+{
+  uint64 usr_ptr; // user pointer to struct stat
+
+  if(argaddr(1, &usr_ptr) < 0) // get pointer from caller's argument
+    return -1; 
+
+  return sysstat(usr_ptr);
+}

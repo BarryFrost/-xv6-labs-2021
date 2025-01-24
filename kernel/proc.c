@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "sysinfo.h"
 
 struct cpu cpus[NCPU];
 
@@ -25,6 +26,46 @@ extern char trampoline[]; // trampoline.S
 // memory model when using p->parent.
 // must be acquired before any p->lock.
 struct spinlock wait_lock;
+
+extern uint64 get_freedmem(void);
+
+uint64
+get_freedproc(void)
+{
+  struct proc *p;
+  uint64 num_freedproc = 0;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    // acquire(&p->lock);
+    if(p->state == UNUSED) {
+      num_freedproc++;
+      // goto found;
+    }
+    // } else {
+    //   release(&p->lock);
+    // }
+  }
+  return num_freedproc;
+}
+
+void 
+sysstati(struct sysinfo *st)
+{
+  // read freed memory and freed process from kernel
+  st->nproc = get_freedproc();
+  st->freemem = get_freedmem();
+}
+
+int 
+sysstat(uint64 addr)
+{
+  struct sysinfo st;
+  struct proc *p = myproc();
+  sysstati(&st);
+  // write back to user space
+  if(copyout(p->pagetable, addr, (char*)&st, sizeof(st)) < 0)
+    return -1;
+  return 0;
+}
 
 // Allocate a page for each process's kernel stack.
 // Map it high in memory, followed by an invalid
